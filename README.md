@@ -12,9 +12,19 @@ cat result/document.txt
 nix build .\#version-replace-container
 ```
 
-## Run container
+## Run container from locally built image
 ```
 docker image load -i result
+docker run -itd ghcr.io/rschardt/version-replace-container:latest
+# get container-name
+docker ps
+docker attach container-name
+cat document.txt
+```
+
+## Run container from automatically pushed image
+```
+docker pull ghcr.io/rschardt/version-replace-container:latest
 docker run -itd ghcr.io/rschardt/version-replace-container:latest
 # get container-name
 docker ps
