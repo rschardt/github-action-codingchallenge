@@ -9,6 +9,9 @@ jobs:
   replace_build_upload:
     name: Replace version, build docker-container and upload to ghcr.io
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -24,7 +27,7 @@ jobs:
       - name: Replace version
         run: nix build
 
-      - name: Commit changed file
+      - name: Commit changed file 
         run: |
           cp result/document.txt document.txt
           git add document.txt
