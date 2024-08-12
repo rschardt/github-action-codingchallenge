@@ -3,11 +3,13 @@
 
   inputs = {
     utils.url = "github:numtide/flake-utils";
+    nix-filter.url = "github:numtide/nix-filter";
   };
 
   outputs = {
     nixpkgs,
     utils,
+    nix-filter,
     ...
     }:
     utils.lib.eachSystem ["x86_64-linux"] (
@@ -25,8 +27,6 @@
               version = "1";
               nextVersion = "2";
               src = ./.;
-              buildInputs = [
-              ];
 
               buildPhase = ''
                 sed -i 's/${version}/${nextVersion}/' document.txt
@@ -36,6 +36,28 @@
                 mkdir -p $out/
                 mv document.txt $out/document.txt
               '';
+            };
+
+            version-replace-container = pkgs.dockerTools.buildImage {
+              name = "ghcr.io/rschardt/version-replace-container";
+              tag = "latest";
+              copyToRoot = (pkgs.buildEnv {
+                name = "version-replace-container-layer-0";
+                paths = [
+                  (nix-filter {
+                    root = ./.;
+                    include = [
+                      ./document.txt
+                    ];
+                  })
+                  pkgs.coreutils
+                  pkgs.bashInteractive
+                ];
+                pathsToLink = [ "/" ];
+              });
+              config = {
+                Cmd = [ "/bin/bash" ];
+              };
             };
           };
         }
