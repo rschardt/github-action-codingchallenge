@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        
+      - name: Setup Commit Persona
         run: |
           git config user.name "rschardt"
           git config user.email "42609861+rschardt@users.noreply.github.com"
